@@ -11,10 +11,12 @@ const searchInput = document.querySelector('input[name="searchQuery"]');
 const searchForm = document.querySelector('.search-form');
 const gallery = document.querySelector('.gallery');
 const loadMoreButton = document.querySelector('.load-more');
-const galleryElement = document.getElementById('gallery');
+// const galleryElement = document.getElementById('gallery');
 
 searchForm.addEventListener('submit', async function(event) {
-  event.preventDefault(); 
+  event.preventDefault();
+  clearGallery();
+  page = 1;
   await getImage();
 });
 
@@ -31,6 +33,12 @@ function getApiUrl(searchQuery, page) {
 
 function clearGallery() {
   gallery.innerHTML = '';
+}
+
+function appendImages(data) {
+  data.hits.forEach(image => {
+    renderImageCard(image);
+  });
 }
 
 function renderImageCard(image) {
@@ -87,11 +95,11 @@ async function getImage() {
         loadMoreButton.style.display = 'none';
       } else {
         totalHits = data.totalHits;
-        clearGallery();
-        data.hits.forEach(image => {
-          renderImageCard(image);
-        });
-        galleryElement.scrollIntoView({ behavior: 'smooth' });
+        appendImages(data);
+        // data.hits.forEach(image => {
+        //   renderImageCard(image);
+        // });
+        // galleryElement.scrollIntoView({ behavior: 'smooth' });
         if (page * perPage >= totalHits) {
           loadMoreButton.style.display = 'none';
           showNotification("We're sorry, but you've reached the end of search results.");
